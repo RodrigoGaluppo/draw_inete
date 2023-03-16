@@ -182,6 +182,10 @@ socket.on('connect', (socketInfo) => {
 
   })
   
+  socket.on("cannotConnect",()=>{
+    window.alert("WAIT, game already started")
+    location.href="./game.html";
+  })
   
   socket.on("ended_turn",()=>{
     console.log("game ended")
