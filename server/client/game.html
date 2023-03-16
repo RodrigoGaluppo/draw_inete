@@ -121,6 +121,9 @@ const messageText = document.getElementById("messageBox")
 const tableBody = document.getElementById('playersTable')
 let gameStarted = false
 
+if(localStorage.getItem("userName") === null){
+  location.href = "/"
+}
 
 if(localStorage.getItem("btnDisabled") == "true"){
   btnStart.disabled = true;
@@ -183,8 +186,9 @@ socket.on('connect', (socketInfo) => {
   })
   
   socket.on("cannotConnect",()=>{
-    window.alert("WAIT, game already started")
     location.href="./game.html";
+    window.alert("WAIT, game already started")
+    
   })
   
   socket.on("ended_turn",()=>{
