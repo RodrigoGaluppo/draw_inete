@@ -343,6 +343,14 @@ io.on("connection",(socket:Socket)=>{
 
   socket.on("playerConnectedClient",(socketData:any)=>{
 
+
+    if(drawingPlayer !== "") // when game has already started
+    {
+
+      io.to(socket.id).emit("cannotConnect")
+      return;
+    }
+
     if(socketData.userName  != "")
     {
       users.push({
