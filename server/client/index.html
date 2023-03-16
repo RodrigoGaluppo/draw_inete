@@ -30,19 +30,12 @@
   
     var input = document.getElementById('SaveUserName');
     var button = document.getElementById('enter');              
-    let gameStarted = false
-
-  socket.on("game_started",(data)=>{
-    gameStarted = true;
-  })
-
+    
     input.addEventListener('input', function() {
       button.disabled = input.value.length === 0;
     });
     
     document.getElementById("enter").onclick = function () {   
-      if(!gameStarted)
-      {
       localStorage && (localStorage.setItem('userName', input.value));
 
       socket.emit('usernameCheck');
@@ -50,7 +43,7 @@
         let userExists = false;
         users.forEach(element => {
 
-          
+     
           if(element.userName===localStorage.getItem('userName'))
           {
             window.alert('ERROR, User already exists');
@@ -71,11 +64,6 @@
       })
       
       console.log(localStorage.getItem('userName')+' joined the game');
-    }
-    else
-    {
-      window.alert('WAIT, game already started');
-    }
     };
            
 </script>
