@@ -23,6 +23,25 @@ selectedTool = "brush",
 brushWidth = 5,
 selectedColor = "#000";
 
+function resetVariables(){
+    
+    selectedTool = "brush",
+    brushWidth = 5,
+    selectedColor = "#000";
+    isDrawingAllowed = false;
+    isDrawing = false;
+
+    document.querySelector(".options .active").classList.remove("active");
+    document.getElementById("brush").classList.add("active");
+    selectedTool = "brush"
+    document.getElementById("word").style.display = "none"
+
+    fillColor.checked = false;
+
+
+}
+
+
 const fillColorCheckedChanged = ()=>{
 
     if(isDrawingAllowed)
@@ -87,7 +106,7 @@ socket.on("drawing_allowed", (word) => {
 });
 
 socket.on("user_ended_turn", ()=>{
-    isDrawingAllowed = false;
+    resetVariables()
     document.getElementById("word").style.display = "none"
 })
 
@@ -107,9 +126,9 @@ const startDraw = (e) => {
 }
 
 socket.on("fillColorCheckedChanged",()=>{
-    if (isDrawingAllowed) {
-        fillColor.checked = !fillColor.checked
-    }
+   
+    fillColor.checked = !fillColor.checked
+    
 })
 
 socket.on("startDrawServer",(socketData)=>{
@@ -146,6 +165,18 @@ const drawing = (e) => {
     
 }
 
+socket.on("gameReseted",()=>{
+    resetVariables()
+})
+
+socket.on("ended_turn",()=>{
+    resetVariables()
+
+    console.log("game ended")
+        
+    localStorage.setItem("btnDisabled","false")
+    btnStart.disabled = false;
+})
 
 socket.on("changeToolServer",(btnId)=>{
 
@@ -297,10 +328,10 @@ canvas.addEventListener("touchmove", function (e) {
 }, false);
 
 // Desabilita o botão direito do mouse
-document.addEventListener("contextmenu", function(e){
+/*document.addEventListener("contextmenu", function(e){
     window.alert('Cant do that hehe')
     e.preventDefault();
-}, false);
+}, false);*/
 
 // Desabilita a tecla F12
 document.addEventListener("keydown", function(e) {
@@ -315,9 +346,9 @@ socket.on("mouseUpServer",()=>{
 })
 
 socket.on("colorChanged",(color)=>{
-    if(isDrawingAllowed){
-         selectedColor = color;
-    }
+    
+    selectedColor = color;
+    
    
 })
 

@@ -5,7 +5,7 @@ const app = require('express')();
 import express from "express";
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 80;
 import {Socket} from "socket.io"
 import {Request,Response} from "express";
 
@@ -225,6 +225,29 @@ io.on("connection",(socket:Socket)=>{
 
   socket.on("message_sent", async function(socketInfo: ISocketToUserWithMessage){
 
+
+    if(socketInfo.message.toLowerCase().trim() === "reset"){
+      messages = []
+      let users2:IUser[] = []
+
+      users.map((u)=>{
+        users2.push({...u, score:0})
+      })
+
+      users = users2
+
+      messages.push({
+        username: "JC BOT",
+        message: `GAME RESETED 😢`,
+      });
+
+      io.emit("message_received")
+      io.emit("playerConnectedServer", users)
+      io.emit("gameReseted")
+      clearTurn()
+
+      return
+    }
   
     if(drawingPlayer !== "" && generaTedWord !== "") // game is running
     {
@@ -239,7 +262,7 @@ io.on("connection",(socket:Socket)=>{
           //player
           addPoints(user.userName, socketInfo.message.length)
           //drawer
-          addPoints(drawer.userName, socketInfo.message.length)
+          addPoints(drawer.userName, socketInfo.message.length > 0 ? socketInfo.message.length - 1 : 1)
 
           messages.push({
             username: "JC BOT",
@@ -248,7 +271,7 @@ io.on("connection",(socket:Socket)=>{
 
           messages.push({
             username: "JC BOT",
-            message: `Nice ${users.find(u=>u.socketId === drawingPlayer)?.userName && "Drawer"} - ${user.score} points`,
+            message: `Nice ${drawer?.userName && "drawer"} - ${drawer.score} points`,
           });
 
           io.emit("message_received")
@@ -273,27 +296,7 @@ io.on("connection",(socket:Socket)=>{
       return
     }
 
-    if(socketInfo.message.toLowerCase().trim() === "reset"){
-      messages = []
-      let users2:IUser[] = []
-
-      users.map((u)=>{
-        users2.push({...u, score:0})
-      })
-
-      users = users2
-
-      messages.push({
-        username: "JC BOT",
-        message: `GAME RESETED 😢`,
-      });
-
-      io.emit("message_received")
-      io.emit("playerConnectedServer", users)
-      clearTurn()
-
-      return
-    }
+   
 
     messages.push({
       message:socketInfo.message,
@@ -467,6 +470,6 @@ app.get('/', function(req:Request, res:Response) {
   
 });
 
-server.listen(port, function() {
+server.listen(port, "192.168.1.67", function() {
   console.log(`Listening on port ${port}`);
 });
