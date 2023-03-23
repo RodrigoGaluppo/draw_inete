@@ -135,27 +135,6 @@ socket.on('disconnect', () => {
 });
 
 
-document.addEventListener("keydown", function(e) {
-    if (e.keyCode == 13) {
-      if(messageText.value == "")
-    {
-      alert("Complete the message")
-      return;
-    }
-    else
-    {
-      socket.emit("message_sent",{
-      socket_id,
-      user_name,
-      message:messageText.value,
-          
-      })
-
-      messageText.value = ""
-    }
-    }
-}, false);
-
 btnSend.addEventListener("click",()=>{
 
   if(messageText.value == "")
@@ -171,13 +150,9 @@ btnSend.addEventListener("click",()=>{
       message:messageText.value,
           
       })
-
-      messageText.value = ""
     }
 
 })
-
-
 
 function addPlayerRow(playerName) {
   const tableBody = document.getElementById('playersTable');
@@ -216,7 +191,12 @@ socket.on('connect', (socketInfo) => {
     
   })
   
-  
+  socket.on("ended_turn",()=>{
+    console.log("game ended")
+    
+    localStorage.setItem("btnDisabled","false")
+    btnStart.disabled = false;
+  })
 
   socket.on("closeChat",()=>{
     messageText.readOnly = true;
@@ -261,18 +241,6 @@ socket.on('connect', (socketInfo) => {
     
   });
 
-
-  socket.on("gameReseted",()=>{
-    btnStart.innerText = "Start Game"
-        btnStart.style.backgroundColor = "green"
-        gameStarted=false
-        socket.emit("end_turn", {
-          socket_id,
-          user_name,
-        });
-        
-  })
-
   socket.on("gameStarted",(user)=>{
     
   })
@@ -304,15 +272,15 @@ socket.on('connect', (socketInfo) => {
 
   });
   
-  socket.on('playerDisconnectedServer', (players) => {
+  socket.on('playerDisconnectedServer', (playerName) => {
     
     const tableBody = document.getElementById('playersTable');
 
-      tableBody.innerHTML = ""
-      players.forEach(element => {
-        console.log(element.userName+' adicionado à tabela')
-        addPlayerRow(element.userName + " - " + element.score);
-      });
+    
+    players.forEach(element => {
+      console.log(element.userName+' removido da tabela')
+      removePlayerRow(element.userName);
+    });
 
 
   });

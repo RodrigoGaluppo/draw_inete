@@ -17,7 +17,7 @@ const app = require('express')();
 const express_1 = __importDefault(require("express"));
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 8080;
 var htmlPath = path_1.default.resolve("client");
 app.use(express_1.default.static(htmlPath));
 let words = [
@@ -187,24 +187,8 @@ io.on("connection", (socket) => {
         });
     });
     socket.on("message_sent", function (socketInfo) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            if (socketInfo.message.toLowerCase().trim() === "reset") {
-                messages = [];
-                let users2 = [];
-                users.map((u) => {
-                    users2.push(Object.assign(Object.assign({}, u), { score: 0 }));
-                });
-                users = users2;
-                messages.push({
-                    username: "JC BOT",
-                    message: `GAME RESETED 😢`,
-                });
-                io.emit("message_received");
-                io.emit("playerConnectedServer", users);
-                io.emit("gameReseted");
-                clearTurn();
-                return;
-            }
             if (drawingPlayer !== "" && generaTedWord !== "") // game is running
              {
                 if (generaTedWord.toLowerCase().trim().includes(socketInfo.message.toLowerCase().trim()) && socketInfo.message.length > 2) {
@@ -214,14 +198,14 @@ io.on("connection", (socket) => {
                         //player
                         addPoints(user.userName, socketInfo.message.length);
                         //drawer
-                        addPoints(drawer.userName, socketInfo.message.length > 0 ? socketInfo.message.length - 1 : 1);
+                        addPoints(drawer.userName, socketInfo.message.length);
                         messages.push({
                             username: "JC BOT",
                             message: `Nice ${user.userName}!🎉 - ${user.score} points`,
                         });
                         messages.push({
                             username: "JC BOT",
-                            message: `Nice ${(drawer === null || drawer === void 0 ? void 0 : drawer.userName) && "drawer"} - ${drawer.score} points`,
+                            message: `Nice ${((_a = users.find(u => u.socketId === drawingPlayer)) === null || _a === void 0 ? void 0 : _a.userName) && "Drawer"} - ${user.score} points`,
                         });
                         io.emit("message_received");
                         io.to(socket.id).emit("closeChat");
@@ -236,6 +220,22 @@ io.on("connection", (socket) => {
                     });
                     io.emit("message_received");
                 }
+                return;
+            }
+            if (socketInfo.message.toLowerCase().trim() === "reset") {
+                messages = [];
+                let users2 = [];
+                users.map((u) => {
+                    users2.push(Object.assign(Object.assign({}, u), { score: 0 }));
+                });
+                users = users2;
+                messages.push({
+                    username: "JC BOT",
+                    message: `GAME RESETED 😢`,
+                });
+                io.emit("message_received");
+                io.emit("playerConnectedServer", users);
+                clearTurn();
                 return;
             }
             messages.push({
@@ -269,11 +269,6 @@ io.on("connection", (socket) => {
         io.emit("mouseUpServer");
     });
     socket.on("playerConnectedClient", (socketData) => {
-        if (drawingPlayer !== "") // when game has already started
-         {
-            io.to(socket.id).emit("cannotConnect");
-            return;
-        }
         if (socketData.userName != "") {
             users.push({
                 userName: socketData.userName,
@@ -348,6 +343,6 @@ io.on("connection", (socket) => {
 app.get('/', function (req, res) {
     return res.sendfile(path_1.default.resolve("client", "index.html"));
 });
-server.listen(port, "192.168.1.67", function () {
+server.listen(port, function () {
     console.log(`Listening on port ${port}`);
 });
