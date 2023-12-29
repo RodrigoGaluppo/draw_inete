@@ -16,6 +16,8 @@ if(canvas!=null)
 {
     ctx = canvas.getContext("2d");
 }
+
+
 // global variables with default value
 let prevMouseX, prevMouseY, snapshot,
 isDrawing = false,
@@ -23,9 +25,10 @@ selectedTool = "brush",
 brushWidth = 5,
 selectedColor = "#000";
 
+
 const fillColorCheckedChanged = ()=>{
 
-    if(isDrawingAllowed)
+    if(isDrawingAllowed) // user changing
     {
         socket.emit("fillColorCheckedChanged")
     } else{
@@ -87,8 +90,20 @@ socket.on("drawing_allowed", (word) => {
 });
 
 socket.on("user_ended_turn", ()=>{
+
     isDrawingAllowed = false;
+    
     document.getElementById("word").style.display = "none"
+})
+
+socket.on("ended_turn",()=>{
+    // reset values
+  
+    selectedTool = "brush"
+    brushWidth = 5
+    selectedColor = "#000"
+    fillColor.checked = false
+    
 })
 
 const startDraw = (e) => {
@@ -107,9 +122,9 @@ const startDraw = (e) => {
 }
 
 socket.on("fillColorCheckedChanged",()=>{
-    if (isDrawingAllowed) {
+    
         fillColor.checked = !fillColor.checked
-    }
+    
 })
 
 socket.on("startDrawServer",(socketData)=>{
