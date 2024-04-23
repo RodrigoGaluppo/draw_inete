@@ -1,4 +1,6 @@
-# draw_inete
+# Draw INETE
+![drawINETE](https://github.com/RodrigoGaluppo/draw_inete/assets/68329584/61a20eeb-2382-41df-96a7-b8c3c86485be)
+
 
 **draw_inete** is a collaborative drawing project inspired by the popular web game Gartic. Developed by Rodrigo Galuppo and Maksym Grebeniuk, this project allows users to create virtual rooms and engage in real-time drawing and guessing activities with friends.
 
