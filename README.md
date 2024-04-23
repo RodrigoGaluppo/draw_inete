@@ -6,6 +6,9 @@
 
 In **draw_inete**, users can create a room and invite friends to join by sharing a link. Once inside the room, participants can set their usernames and begin the game. When it's someone's turn to draw, they are provided with a random word to illustrate, while others try to guess the word based on the drawing. Players earn points for correctly guessing the word, with the point value determined by the length of the word.
 
+## Demo
+https://youtu.be/JIdud2YnOuQ
+
 ## Features
 
 - **Room Creation**: Users can create virtual rooms and share links for friends to join.
